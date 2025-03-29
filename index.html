@@ -39,7 +39,7 @@
     }
     .office.selected {
       border: 2px solid #00b2ff;
-      background-color: rgba(0, 178, 255, 0.1);
+      background-color: #fff6cc;
     }
     .address {
       font-size: 0.85em;
@@ -67,6 +67,35 @@
       right: 10px;
       border: 1px solid #ccc;
     }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      color: #ccc;
+    }
+    .footer h3 {
+      color: #fff;
+      margin-bottom: 1rem;
+    }
+    .footer .link-group {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem 2rem;
+      max-width: 1000px;
+      margin: auto;
+    }
+    .footer .link-group div {
+      min-width: 200px;
+    }
+    .footer a {
+      color: #00b2ff;
+      text-decoration: none;
+      display: block;
+      margin: 0.3rem 0;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -74,6 +103,31 @@
     <h1>UNLIMIT Global Office Time</h1>
   </div>
   <div class="offices" id="offices"></div>
+
+  <div class="footer">
+    <h3>Common Links</h3>
+    <div class="link-group">
+      <div>
+        <a href="https://help.unl24.com" target="_blank">Jira Help Desk</a>
+        <a href="https://jira.unl24.com" target="_blank">Jira</a>
+        <a href="https://confluence.unl24.com" target="_blank">Confluence</a>
+        <a href="https://cp.unl24.com" target="_blank">Change Password</a>
+      </div>
+      <div>
+        <a href="https://unlimit.com/ma-new" target="_blank">MA EU</a>
+        <a href="https://unlimit.com/orders" target="_blank">Orders EU</a>
+        <a href="https://unlimit.com/pm" target="_blank">PM EU</a>
+      </div>
+      <div>
+        <a href="https://psp.in.unlimit.com/ma-new" target="_blank">MA India</a>
+        <a href="https://psp.in.unlimit.com/orders" target="_blank">Orders India</a>
+        <a href="https://psp.in.unlimit.com/pm" target="_blank">PM India</a>
+      </div>
+      <div>
+        <a href="https://onlinebank.unlimit.com" target="_blank">Banking</a>
+      </div>
+    </div>
+  </div>
 
   <script>
     const offices = [
@@ -158,4 +212,3 @@
   </script>
 </body>
 </html>
-
