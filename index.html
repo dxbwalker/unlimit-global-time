@@ -8,8 +8,7 @@
       font-family: Arial, sans-serif;
       padding: 2rem;
       margin: 0;
-      background: url('https://upload.wikimedia.org/wikipedia/commons/8/83/Equirectangular_projection_SW.jpg') no-repeat center center fixed;
-      background-size: cover;
+      background: linear-gradient(135deg, #0c0c0c 0%, #1e1e2f 100%);
     }
     .header {
       text-align: center;
@@ -18,8 +17,8 @@
     .header h1 {
       margin: 0;
       font-size: 1.8rem;
-      color: #fff;
-      text-shadow: 1px 1px 2px black;
+      color: #ffffff;
+      text-shadow: 1px 1px 2px #000;
     }
     .offices {
       display: flex;
@@ -28,10 +27,10 @@
       gap: 1rem;
     }
     .office {
-      border: 1px solid #ccc;
+      border: 1px solid #333;
       border-radius: 10px;
       padding: 1rem;
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.95);
       width: 250px;
       text-align: center;
       cursor: pointer;
@@ -39,8 +38,8 @@
       position: relative;
     }
     .office.selected {
-      border: 2px solid #0077cc;
-      background-color: rgba(230, 242, 255, 0.95);
+      border: 2px solid #00b2ff;
+      background-color: rgba(0, 178, 255, 0.1);
     }
     .address {
       font-size: 0.85em;
@@ -57,7 +56,7 @@
     }
     .offset {
       font-size: 0.85em;
-      color: #0077cc;
+      color: #00b2ff;
       margin-top: 0.5rem;
     }
     .flag {
@@ -159,3 +158,4 @@
   </script>
 </body>
 </html>
+
