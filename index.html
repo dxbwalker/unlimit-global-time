@@ -20,6 +20,12 @@
       color: #ffffff;
       text-shadow: 1px 1px 2px #000;
     }
+    .local-time {
+      text-align: center;
+      color: #fff;
+      font-size: 1.2rem;
+      margin-top: 1rem;
+    }
     .offices {
       display: flex;
       flex-wrap: wrap;
@@ -96,19 +102,43 @@
     .footer a:hover {
       text-decoration: underline;
     }
+    .pomodoro {
+      margin-top: 2rem;
+      text-align: center;
+    }
+    .pomodoro button {
+      padding: 0.5rem 1rem;
+      margin: 0.5rem;
+      border: none;
+      background-color: #00b2ff;
+      color: white;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <div class="header">
     <h1>UNLIMIT Global Office Time</h1>
+    <div class="local-time">
+      Your Local Time: <span id="localTime">--:--:--</span> on <span id="localDate">--</span>
+    </div>
   </div>
   <div class="offices" id="offices"></div>
+
+  <div class="pomodoro">
+    <h3 style="color: #fff;">Pomodoro Timer</h3>
+    <div id="timer" style="color: #fff; font-size: 1.5rem;">25:00</div>
+    <button onclick="startPomodoro()">Start</button>
+    <button onclick="resetPomodoro()">Reset</button>
+  </div>
 
   <div class="footer">
     <h3>Common Links</h3>
     <div class="link-group">
       <div>
-                <a href="https://meet.google.com/new" target="_blank">Start Google Meet Now</a>
+        <a href="https://meet.google.com/new" target="_blank">Start Google Meet Now</a>
         <a href="https://help.unl24.com" target="_blank">Jira Help Desk</a>
         <a href="https://jira.unl24.com" target="_blank">Jira</a>
         <a href="https://confluence.unl24.com" target="_blank">Confluence</a>
@@ -133,41 +163,57 @@
 
   <script>
     const offices = [
-      { name: 'United Kingdom', countryCode: 'gb', timezone: 'Europe/London', address: '2 Seething Lane, 7th Floor, EC3N 4AT, London' },
-      { name: 'Cyprus', countryCode: 'cy', timezone: 'Europe/Nicosia', address: 'Trilogy, West Tower, 12th floor, 28 October Ave 341, 3106, Limassol' },
-      { name: 'Brazil', countryCode: 'br', timezone: 'America/Sao_Paulo', address: 'Av. das Nações Unidas, 12551, cj 2201, Brooklin Novo, São Paulo' },
-      { name: 'Hong Kong', countryCode: 'hk', timezone: 'Asia/Hong_Kong', address: '31-32/F, Hysan Place, 500 Hennessy Road, Causeway Bay' },
-      { name: 'China (Shanghai)', countryCode: 'cn', timezone: 'Asia/Shanghai', address: '11F, Carlton Building, No. 21 Huanghe Road, Huangpu District, Shanghai' },
-      { name: 'China (Xiamen)', countryCode: 'cn', timezone: 'Asia/Shanghai', address: 'Room 805, No.8, Lujiang Road International Plaza, Siming District, Xiamen, Fujian' },
-      { name: 'Singapore', countryCode: 'sg', timezone: 'Asia/Singapore', address: 'Raffles Place, #35-06 Republic Plaza, 048619' },
-      { name: 'Vietnam', countryCode: 'vn', timezone: 'Asia/Bangkok', address: 'Office 1622, 16th-floor Daeha Business Center Building, No. 360, Kim Ma Street, Hanoi City' },
-      { name: 'USA', countryCode: 'us', timezone: 'America/Los_Angeles', address: '44 Tehama st, Suite LL2, San Francisco, CA 94105' },
-      { name: 'Mexico', countryCode: 'mx', timezone: 'America/Mexico_City', address: '41st floor, Torre Mayor, 505 Av. Paseo de la Reforma, Mexico City' },
-      { name: 'Kenya', countryCode: 'ke', timezone: 'Africa/Nairobi', address: 'Icea Lion Centre, Riverside Park, Chiromo Road, Westlands, Nairobi' },
-      { name: 'Nigeria', countryCode: 'ng', timezone: 'Africa/Lagos', address: '7th Floor, NUPENG Tower, NO. 9, Jibowu Street, Yaba, Lagos state' },
-      { name: 'India', countryCode: 'in', timezone: 'Asia/Kolkata', address: '14th Floor, Wing 1, AIPL Business Club, Sector 62, Gurugram, Haryana 122102' },
-      { name: 'Japan', countryCode: 'jp', timezone: 'Asia/Tokyo', address: 'Shinagawa Grand Central Tower 8F, 2-16-4 Konan, Minato-ku Tokyo 108-0075' },
-      { name: 'Germany', countryCode: 'de', timezone: 'Europe/Berlin', address: 'Potsdamer Platz 10, 5th floor, Haus 2, Berlin, 10785' },
-      { name: 'Tanzania', countryCode: 'tz', timezone: 'Africa/Dar_es_Salaam', address: 'Tanhouse, 6th Floor, Plot 34/1 14108 Victoria Area, Dar es Salaam' },
-    ];
-
+  { name: 'United Kingdom', countryCode: 'gb', timezone: 'Europe/London', address: '2 Seething Lane, 7th Floor, EC3N 4AT, London' },
+  { name: 'Cyprus', countryCode: 'cy', timezone: 'Europe/Nicosia', address: 'Trilogy, West Tower, 12th floor, 28 October Ave 341, 3106, Limassol' },
+  { name: 'Brazil', countryCode: 'br', timezone: 'America/Sao_Paulo', address: 'Av. das Nações Unidas, 12551, cj 2201, Brooklin Novo, São Paulo' },
+  { name: 'Hong Kong', countryCode: 'hk', timezone: 'Asia/Hong_Kong', address: '31-32/F, Hysan Place, 500 Hennessy Road, Causeway Bay' },
+  { name: 'China (Shanghai)', countryCode: 'cn', timezone: 'Asia/Shanghai', address: '11F, Carlton Building, No. 21 Huanghe Road, Huangpu District, Shanghai' },
+  { name: 'China (Xiamen)', countryCode: 'cn', timezone: 'Asia/Shanghai', address: 'Room 805, No.8, Lujiang Road International Plaza, Siming District, Xiamen, Fujian' },
+  { name: 'Singapore', countryCode: 'sg', timezone: 'Asia/Singapore', address: 'Raffles Place, #35-06 Republic Plaza, 048619' },
+  { name: 'Vietnam', countryCode: 'vn', timezone: 'Asia/Bangkok', address: 'Office 1622, 16th-floor Daeha Business Center Building, No. 360, Kim Ma Street, Hanoi City' },
+  { name: 'USA', countryCode: 'us', timezone: 'America/Los_Angeles', address: '44 Tehama st, Suite LL2, San Francisco, CA 94105' },
+  { name: 'Mexico', countryCode: 'mx', timezone: 'America/Mexico_City', address: '41st floor, Torre Mayor, 505 Av. Paseo de la Reforma, Mexico City' },
+  { name: 'Kenya', countryCode: 'ke', timezone: 'Africa/Nairobi', address: 'Icea Lion Centre, Riverside Park, Chiromo Road, Westlands, Nairobi' },
+  { name: 'Nigeria', countryCode: 'ng', timezone: 'Africa/Lagos', address: '7th Floor, NUPENG Tower, NO. 9, Jibowu Street, Yaba, Lagos state' },
+  { name: 'India', countryCode: 'in', timezone: 'Asia/Kolkata', address: '14th Floor, Wing 1, AIPL Business Club, Sector 62, Gurugram, Haryana 122102' },
+  { name: 'Japan', countryCode: 'jp', timezone: 'Asia/Tokyo', address: 'Shinagawa Grand Central Tower 8F, 2-16-4 Konan, Minato-ku Tokyo 108-0075' },
+  { name: 'Germany', countryCode: 'de', timezone: 'Europe/Berlin', address: 'Potsdamer Platz 10, 5th floor, Haus 2, Berlin, 10785' },
+  { name: 'Tanzania', countryCode: 'tz', timezone: 'Africa/Dar_es_Salaam', address: 'Tanhouse, 6th Floor, Plot 34/1 14108 Victoria Area, Dar es Salaam' },
+];
     let selectedOffice = null;
+    let pomodoroTime = 25 * 60;
+    let pomodoroInterval;
 
     function getTimeInTimezone(timezone) {
       return new Date(new Date().toLocaleString('en-US', { timeZone: timezone }));
     }
 
     function getOffsetInHours(baseTZ, compareTZ) {
-      const baseDate = getTimeInTimezone(baseTZ);
-      const compareDate = getTimeInTimezone(compareTZ);
-      const diffMs = compareDate - baseDate;
+      const baseDate = new Date();
+      const baseOffset = new Date(baseDate.toLocaleString('en-US', { timeZone: baseTZ })).getTime();
+      const compareOffset = new Date(baseDate.toLocaleString('en-US', { timeZone: compareTZ })).getTime();
+      const diffMs = compareOffset - baseOffset;
       const diffHrs = diffMs / (1000 * 60 * 60);
-      return Math.round(diffHrs);
+      return Math.round(diffHrs * 100) / 100;
     }
 
     function formatOffset(hours) {
       if (hours === 0) return 'Same time';
-      return (hours > 0 ? '+' : '') + hours + 'h';
+      const abs = Math.abs(hours);
+      const h = Math.floor(abs);
+      const m = Math.round((abs - h) * 60);
+      const sign = hours > 0 ? '+' : '-';
+      return `${sign}${h}h ${m}m`;
+    }
+
+    function updateLocalTime() {
+      const now = new Date();
+      document.getElementById('localTime').textContent = now.toLocaleTimeString('en-US', {
+        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+      });
+      document.getElementById('localDate').textContent = now.toLocaleDateString('en-GB', {
+        weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'
+      });
     }
 
     function updateTimes() {
@@ -187,7 +233,7 @@
         if (selectedOffice && selectedOffice !== office.name) {
           const base = offices.find(o => o.name === selectedOffice);
           const offset = getOffsetInHours(base.timezone, office.timezone);
-          offsetText = `<div class="offset">(${formatOffset(offset)} from ${selectedOffice})</div>`;
+          offsetText = `<div class="offset" title="Time difference is calculated based on local system time and may vary slightly due to regional DST rules.">(${formatOffset(offset)} from ${selectedOffice})</div>`;
         }
 
         const div = document.createElement('div');
@@ -209,9 +255,31 @@
       });
     }
 
-    setInterval(updateTimes, 1000);
-    updateTimes();
+    function startPomodoro() {
+      clearInterval(pomodoroInterval);
+      pomodoroInterval = setInterval(() => {
+        if (pomodoroTime > 0) {
+          pomodoroTime--;
+          const minutes = String(Math.floor(pomodoroTime / 60)).padStart(2, '0');
+          const seconds = String(pomodoroTime % 60).padStart(2, '0');
+          document.getElementById('timer').textContent = `${minutes}:${seconds}`;
+        } else {
+          clearInterval(pomodoroInterval);
+          alert('Pomodoro complete! Take a break.');
+        }
+      }, 1000);
+    }
 
-      </script>
+    function resetPomodoro() {
+      clearInterval(pomodoroInterval);
+      pomodoroTime = 25 * 60;
+      document.getElementById('timer').textContent = '25:00';
+    }
+
+    setInterval(updateTimes, 1000);
+    setInterval(updateLocalTime, 1000);
+    updateTimes();
+    updateLocalTime();
+  </script>
 </body>
 </html>
