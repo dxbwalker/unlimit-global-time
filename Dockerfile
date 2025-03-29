@@ -1,12 +1,12 @@
-# Use NGINX as the base image
 FROM nginx:alpine
 
-# Remove default config and copy custom HTML
 COPY index.html /usr/share/nginx/html/index.html
 
-# Expose port
-EXPOSE 8284
+# Ensure the file is readable by nginx (which runs as non-root user)
+RUN chmod 644 /usr/share/nginx/html/index.html
 
-# Override default NGINX config to listen on port 8284
+# Change NGINX to listen on port 8284
 RUN sed -i 's/listen       80;/listen       8284;/g' /etc/nginx/conf.d/default.conf
+
+EXPOSE 8284
 
