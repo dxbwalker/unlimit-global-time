@@ -124,7 +124,9 @@
     <div class="local-time">
       Your Local Time: <span id="localTime">--:--:--</span> on <span id="localDate">--</span>
     </div>
+
   </div>
+
   <div class="offices" id="offices"></div>
 
   <div class="pomodoro">
@@ -248,24 +250,27 @@
         `;
 
         div.addEventListener('click', () => {
-          selectedOffice = office.name === selectedOffice ? null : office.name;
-        });
+  selectedOffice = office.name === selectedOffice ? null : office.name;
+  updateTimes();
+});
 
         container.appendChild(div);
       });
     }
 
     function startPomodoro() {
+  clearInterval(pomodoroInterval);
+  pomodoroInterval = setInterval(() => {
+    if (pomodoroTime > 0) {
+      pomodoroTime--;
+      const minutes = String(Math.floor(pomodoroTime / 60)).padStart(2, '0');
+      const seconds = String(pomodoroTime % 60).padStart(2, '0');
+      document.getElementById('timer').textContent = `${minutes}:${seconds}`;
+    } else {
       clearInterval(pomodoroInterval);
-      pomodoroInterval = setInterval(() => {
-        if (pomodoroTime > 0) {
-          pomodoroTime--;
-          const minutes = String(Math.floor(pomodoroTime / 60)).padStart(2, '0');
-          const seconds = String(pomodoroTime % 60).padStart(2, '0');
-          document.getElementById('timer').textContent = `${minutes}:${seconds}`;
-        } else {
-          clearInterval(pomodoroInterval);
-          alert('Pomodoro complete! Take a break.');
+      flashScreen();
+      document.getElementById('alarmSound').play();
+      alert('Pomodoro complete! Take a break.');
         }
       }, 1000);
     }
@@ -276,10 +281,37 @@
       document.getElementById('timer').textContent = '25:00';
     }
 
-    setInterval(updateTimes, 1000);
-    setInterval(updateLocalTime, 1000);
-    updateTimes();
-    updateLocalTime();
-  </script>
+    document.addEventListener('DOMContentLoaded', () => {
+  setInterval(updateTimes, 1000);
+  setInterval(updateLocalTime, 1000);
+  updateTimes();
+  updateLocalTime();
+});
+    
+  function flashScreen() {
+  const flash = document.createElement('div');
+  flash.style.position = 'fixed';
+  flash.style.top = '0';
+  flash.style.left = '0';
+  flash.style.width = '100%';
+  flash.style.height = '100%';
+  flash.style.backgroundColor = '#ffffff';
+  flash.style.opacity = '1';
+  flash.style.zIndex = '9999';
+  document.body.appendChild(flash);
+  let count = 0;
+  const interval = setInterval(() => {
+    flash.style.opacity = flash.style.opacity === '1' ? '0.3' : '1';
+    count++;
+    if (count > 10) {
+      clearInterval(interval);
+      document.body.removeChild(flash);
+    }
+  }, 300);
+}
+
+
+</script>
+<audio id="alarmSound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
 </body>
 </html>
