@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>UNLIMIT Global Office Time</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      margin: 0;
+      background: url('https://upload.wikimedia.org/wikipedia/commons/8/83/Equirectangular_projection_SW.jpg') no-repeat center center fixed;
+      background-size: cover;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+      color: #fff;
+      text-shadow: 1px 1px 2px black;
+    }
+    .offices {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+    }
+    .office {
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.9);
+      width: 250px;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.3s ease;
+      position: relative;
+    }
+    .office.selected {
+      border: 2px solid #0077cc;
+      background-color: rgba(230, 242, 255, 0.95);
+    }
+    .address {
+      font-size: 0.85em;
+      color: #444;
+      margin-top: 0.5em;
+    }
+    .timezone {
+      font-size: 0.9em;
+      color: #666;
+    }
+    .time {
+      font-size: 1.4em;
+      margin-top: 0.5rem;
+    }
+    .offset {
+      font-size: 0.85em;
+      color: #0077cc;
+      margin-top: 0.5rem;
+    }
+    .flag {
+      width: 32px;
+      height: 20px;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>UNLIMIT Global Office Time</h1>
+  </div>
+  <div class="offices" id="offices"></div>
+
+  <script>
+    const offices = [
+      { name: 'United Kingdom', countryCode: 'gb', timezone: 'Europe/London', address: '2 Seething Lane, 7th Floor, EC3N 4AT, London' },
+      { name: 'Cyprus', countryCode: 'cy', timezone: 'Europe/Nicosia', address: 'Trilogy, West Tower, 12th floor, 28 October Ave 341, 3106, Limassol' },
+      { name: 'Brazil', countryCode: 'br', timezone: 'America/Sao_Paulo', address: 'Av. das Nações Unidas, 12551, cj 2201, Brooklin Novo, São Paulo' },
+      { name: 'Hong Kong', countryCode: 'hk', timezone: 'Asia/Hong_Kong', address: '31-32/F, Hysan Place, 500 Hennessy Road, Causeway Bay' },
+      { name: 'China (Shanghai)', countryCode: 'cn', timezone: 'Asia/Shanghai', address: '11F, Carlton Building, No. 21 Huanghe Road, Huangpu District, Shanghai' },
+      { name: 'China (Xiamen)', countryCode: 'cn', timezone: 'Asia/Shanghai', address: 'Room 805, No.8, Lujiang Road International Plaza, Siming District, Xiamen, Fujian' },
+      { name: 'Singapore', countryCode: 'sg', timezone: 'Asia/Singapore', address: 'Raffles Place, #35-06 Republic Plaza, 048619' },
+      { name: 'Vietnam', countryCode: 'vn', timezone: 'Asia/Bangkok', address: 'Office 1622, 16th-floor Daeha Business Center Building, No. 360, Kim Ma Street, Hanoi City' },
+      { name: 'USA', countryCode: 'us', timezone: 'America/Los_Angeles', address: '44 Tehama st, Suite LL2, San Francisco, CA 94105' },
+      { name: 'Mexico', countryCode: 'mx', timezone: 'America/Mexico_City', address: '41st floor, Torre Mayor, 505 Av. Paseo de la Reforma, Mexico City' },
+      { name: 'Kenya', countryCode: 'ke', timezone: 'Africa/Nairobi', address: 'Icea Lion Centre, Riverside Park, Chiromo Road, Westlands, Nairobi' },
+      { name: 'Nigeria', countryCode: 'ng', timezone: 'Africa/Lagos', address: '7th Floor, NUPENG Tower, NO. 9, Jibowu Street, Yaba, Lagos state' },
+      { name: 'India', countryCode: 'in', timezone: 'Asia/Kolkata', address: '14th Floor, Wing 1, AIPL Business Club, Sector 62, Gurugram, Haryana 122102' },
+      { name: 'Japan', countryCode: 'jp', timezone: 'Asia/Tokyo', address: 'Shinagawa Grand Central Tower 8F, 2-16-4 Konan, Minato-ku Tokyo 108-0075' },
+      { name: 'Germany', countryCode: 'de', timezone: 'Europe/Berlin', address: 'Potsdamer Platz 10, 5th floor, Haus 2, Berlin, 10785' },
+      { name: 'Tanzania', countryCode: 'tz', timezone: 'Africa/Dar_es_Salaam', address: 'Tanhouse, 6th Floor, Plot 34/1 14108 Victoria Area, Dar es Salaam' },
+    ];
+
+    let selectedOffice = null;
+
+    function getTimeInTimezone(timezone) {
+      return new Date(new Date().toLocaleString('en-US', { timeZone: timezone }));
+    }
+
+    function getOffsetInHours(baseTZ, compareTZ) {
+      const baseDate = getTimeInTimezone(baseTZ);
+      const compareDate = getTimeInTimezone(compareTZ);
+      const diffMs = compareDate - baseDate;
+      const diffHrs = diffMs / (1000 * 60 * 60);
+      return Math.round(diffHrs);
+    }
+
+    function formatOffset(hours) {
+      if (hours === 0) return 'Same time';
+      return (hours > 0 ? '+' : '') + hours + 'h';
+    }
+
+    function updateTimes() {
+      const container = document.getElementById('offices');
+      container.innerHTML = '';
+
+      offices.forEach(office => {
+        const localTime = new Date().toLocaleString('en-US', {
+          timeZone: office.timezone,
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false
+        });
+
+        let offsetText = '';
+        if (selectedOffice && selectedOffice !== office.name) {
+          const base = offices.find(o => o.name === selectedOffice);
+          const offset = getOffsetInHours(base.timezone, office.timezone);
+          offsetText = `<div class="offset">(${formatOffset(offset)} from ${selectedOffice})</div>`;
+        }
+
+        const div = document.createElement('div');
+        div.className = 'office' + (selectedOffice === office.name ? ' selected' : '');
+        div.innerHTML = `
+          <img class="flag" src="https://flagcdn.com/32x24/${office.countryCode}.png" alt="flag">
+          <strong>${office.name}</strong>
+          <div class="address">${office.address}</div>
+          <div class="timezone">${office.timezone}</div>
+          <div class="time">${localTime}</div>
+          ${offsetText}
+        `;
+
+        div.addEventListener('click', () => {
+          selectedOffice = office.name === selectedOffice ? null : office.name;
+        });
+
+        container.appendChild(div);
+      });
+    }
+
+    setInterval(updateTimes, 1000);
+    updateTimes();
+  </script>
+</body>
+</html>
